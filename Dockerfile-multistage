@@ -1,1 +1,12 @@
-
+FROM maven:3.9.11-eclipse-termurin-11 AS build
+WORKDIR /app
+COPY pom.xml /app
+copy src /app/src
+RUN ls -la && pwd
+RUN mvn install -Dskiptests
+FROM openjdk:11-jdk
+WORKDIR /app
+COPY --from=build /app/target/springpet-clinic.jar app.jar
+RUN ls && pwd
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]
